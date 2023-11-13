@@ -1,0 +1,25 @@
+[tool.poetry]
+name = "executor"
+version = "0.1.0"
+description = ""
+authors = ["Ilya Chistyakov <ilchistyakov@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.scripts]
+executor = "executor.cli:cli"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+fastapi = "^0.104.1"
+click = "^8.1.7"
+uvicorn = "^0.24.0.post1"
+pydantic = "^2.5.0"
+
+
+[tool.poetry.group.dev.dependencies]
+mypy = "^1.7.0"
+flake8 = "^6.0.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
