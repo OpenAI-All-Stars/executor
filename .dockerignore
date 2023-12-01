@@ -1,5 +1,5 @@
 /tests
-.git
+.git*
 __pycache__
 .tox
 .mypy_cache

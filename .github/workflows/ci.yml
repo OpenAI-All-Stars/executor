@@ -32,9 +32,13 @@ jobs:
     tests:
         needs: build
         name: Tests
-        runs-on: python-3.11-buster
+        runs-on: ubuntu-latest
 
         steps:
+        - name: Set up Python
+          uses: actions/setup-python@v4
+          with:
+            python-version: 3.11
         - uses: actions/checkout@v3
         - name: Install tox
           run: pip install tox
