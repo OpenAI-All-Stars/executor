@@ -1,3 +1,4 @@
+import os
 from pathlib import Path
 import socket
 import docker
@@ -7,7 +8,7 @@ import pytest
 
 @pytest.fixture(scope='session')
 def app_url(repo_root_path, get_free_port, healthcheck) -> str:
-    app_name = 'executor'
+    app_name = os.environ.get('DOCKER_TAG', 'executor')
     client = docker.from_env()
     img, _ = client.images.build(path=repo_root_path, tag=app_name)
     ports = {}
