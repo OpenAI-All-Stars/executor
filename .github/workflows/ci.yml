@@ -1,12 +1,7 @@
 name: publish
 
-on:
-  push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
-
 env:
+  # Use docker.io for Docker Hub if empty
   REGISTRY: ghcr.io
   IMAGE_NAME: openai-all-stars/executor:latest
 
@@ -52,5 +47,9 @@ jobs:
           run: scp docker-compose.yml ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:docker-compose.yml
         - name: connect and pull
           run: ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "docker-compose pull && docker-compose up -d && exit"
-        - name: cleanup
+        - name: cleanup config
+          if: always()
+          run: ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "rm docker-compose.yml"
+        - name: cleanup keys
+          if: always()
           run: rm -rf ~/.ssh
