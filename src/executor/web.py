@@ -8,6 +8,11 @@ from executor.entities import ExecuteBashRequest, ExecuteBashResponse
 app = FastAPI()
 
 
+@app.get('/ping')
+async def ping() -> str:
+    return 'OK'
+
+
 @app.post('/execute-bash')
 async def execute_bash(request: ExecuteBashRequest) -> ExecuteBashResponse:
     proc = await create_subprocess_shell(

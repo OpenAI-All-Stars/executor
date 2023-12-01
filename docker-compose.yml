@@ -1,0 +1,8 @@
+services:
+  executor:
+    container_name: executor
+    image: ghcr.io/openai-all-stars/executor:latest
+    volumes:
+      - executor:/app
+volumes:
+  executor:
