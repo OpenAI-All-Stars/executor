@@ -1,0 +1,56 @@
+name: publish
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: openai-all-stars/executor:latest
+
+jobs:
+
+    build:
+        name: Build
+        runs-on: ubuntu-latest
+
+        steps:
+        - uses: actions/checkout@v3
+        - name: Login
+          run: |
+            echo ${{ secrets.PAT }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+        - name: Build and Publish
+          run: |
+            docker build . --tag ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+            docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+        - name: Upload docker-compose.yml
+          uses: actions/upload-artifact@v3
+          with:
+            name: docker-compose.yml
+            path: docker-compose.yml
+
+    deploy:
+        needs: build
+        name: Deploy
+        runs-on: ubuntu-latest
+
+        steps:
+        - name: Download docker-compose.yml from build
+          uses: actions/download-artifact@v3
+          with:
+            name: docker-compose.yml
+        - name: install ssh keys
+          # check this thread to understand why its needed:
+          # <https://stackoverflow.com/a/70447517>
+          run: |
+            install -m 600 -D /dev/null ~/.ssh/id_rsa
+            echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+            ssh-keyscan -H ${{ secrets.SSH_HOST }} > ~/.ssh/known_hosts
+        - name: copy docker compose config
+          run: scp docker-compose.yml ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:docker-compose.yml
+        - name: connect and pull
+          run: ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "docker-compose pull && docker-compose up -d && exit"
+        - name: cleanup
+          run: rm -rf ~/.ssh
