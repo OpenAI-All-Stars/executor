@@ -1,0 +1,8 @@
+/tests
+.git
+__pycache__
+.tox
+.mypy_cache
+.pytest_cache
+.tox
+.venv

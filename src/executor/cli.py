@@ -12,4 +12,4 @@ def cli() -> None:
 
 @cli.command()
 def server() -> None:
-    uvicorn.run(app)
+    uvicorn.run(app, host='0.0.0.0')
