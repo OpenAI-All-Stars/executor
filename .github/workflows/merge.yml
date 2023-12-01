@@ -13,10 +13,7 @@ jobs:
         runs-on: ubuntu-latest
 
         steps:
-        - name: Download docker-compose.yml from build
-          uses: actions/download-artifact@v3
-          with:
-            name: docker-compose.yml
+        - uses: actions/checkout@v3
         - name: install ssh keys
           # check this thread to understand why its needed:
           # <https://stackoverflow.com/a/70447517>
